@@ -1,5 +1,4 @@
 -- Vanxell Hub for Blox Fruits Auto-Farming
--- Created by [Your Name or Team]
 -- WARNING: Use this script at your own risk.
 
 local VanxellHub = Instance.new("ScreenGui")
@@ -45,24 +44,29 @@ autofarmButton.MouseButton1Click:Connect(function()
             local player = game.Players.LocalPlayer
             local character = player.Character or player.CharacterAdded:Wait()
             if character then
-                local level = player.Data.Level.Value -- Assuming this is where the player's level is stored
+                local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                local playerLevel = player:FindFirstChild("Data"):FindFirstChild("Level").Value -- Assuming player's level is stored here
+
                 -- Find enemies to attack
                 for _, enemy in pairs(workspace:GetChildren()) do
-                    if enemy:IsA("Model") and enemy:FindFirstChild("Humanoid") and enemy.Name ~= player.Name then
-                        local enemyLevel = enemy:FindFirstChild("Level") -- Assuming NPCs have a Level attribute
-                        if enemyLevel and enemyLevel.Value <= level + 5 and enemyLevel.Value >= level - 5 then -- Adjust level range as needed
-                            local distance = (character.HumanoidRootPart.Position - enemy.PrimaryPart.Position).magnitude
+                    if enemy:IsA("Model") and enemy:FindFirstChild("Humanoid") and enemy:FindFirstChild("Level") and enemy.Name ~= player.Name then
+                        local enemyLevel = enemy:FindFirstChild("Level").Value -- Assuming enemies have a Level attribute
+                        -- Check if enemy level is within acceptable range
+                        if enemyLevel <= playerLevel + 5 and enemyLevel >= playerLevel - 5 then
+                            local distance = (humanoidRootPart.Position - enemy.PrimaryPart.Position).magnitude
                             if distance < 50 then -- Adjust distance as needed
                                 character:MoveTo(enemy.PrimaryPart.Position)
                                 wait(0.5) -- Wait for movement
-                                enemy.Humanoid:TakeDamage(50) -- Adjust damage as needed
-                                wait(1) -- Adjust wait time to prevent spamming
+                                if enemy:FindFirstChild("Humanoid") then
+                                    enemy.Humanoid:TakeDamage(50) -- Adjust damage value as needed
+                                end
+                                wait(1) -- Adjust wait time to prevent spamming attacks
                             end
                         end
                     end
                 end
             end
-            wait(0.5) -- Adjust as needed
+            wait(0.5) -- Delay between loops
         end
     else
         autofarmButton.Text = "Auto-Farm: OFF"
