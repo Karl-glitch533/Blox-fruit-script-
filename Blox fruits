@@ -41,18 +41,15 @@ autoquestButton.MouseButton1Click:Connect(function()
     if autoquest then
         autoquestButton.Text = "Auto-Quest: ON"
         while autoquest do
+            -- Example of quest interaction
             local player = game.Players.LocalPlayer
             local character = player.Character or player.CharacterAdded:Wait()
-            if character then
-                -- Example of quest interaction (you'll need to adjust according to the game)
-                local questNPC = workspace:FindFirstChild("QuestNPC") -- Change to your quest NPC's name
-                if questNPC then
-                    character:MoveTo(questNPC.Position)
-                    wait(1) -- Adjust as needed for movement
-                    -- Here you can add logic to accept/complete quests, etc.
-                    -- Example: Check for quest completion conditions
-                    wait(5) -- Wait for some time before checking again
-                end
+            local questNPC = workspace:FindFirstChild("QuestNPC") -- Change to your quest NPC's name
+            if questNPC then
+                character:MoveTo(questNPC.Position)
+                wait(1) -- Adjust as needed for movement
+                -- Here you can add logic to accept/complete quests
+                wait(5) -- Wait for some time before checking again
             end
             wait(0.5) -- Delay between quest checks
         end
@@ -71,22 +68,20 @@ autofarmButton.MouseButton1Click:Connect(function()
         while autofarm do
             local player = game.Players.LocalPlayer
             local character = player.Character or player.CharacterAdded:Wait()
-            if character then
-                local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                local playerLevel = player:WaitForChild("Data"):WaitForChild("Level").Value -- Adjust according to your game
+            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+            local playerLevel = player:WaitForChild("Data"):WaitForChild("Level").Value -- Adjust according to your game
 
-                -- Find enemies to attack
-                for _, enemy in pairs(workspace:GetChildren()) do
-                    if enemy:IsA("Model") and enemy:FindFirstChild("Humanoid") and enemy:FindFirstChild("Level") and enemy.Name ~= player.Name then
-                        local enemyLevel = enemy:FindFirstChild("Level").Value
-                        if enemyLevel <= playerLevel + 5 and enemyLevel >= playerLevel - 5 then
-                            local distance = (humanoidRootPart.Position - enemy.PrimaryPart.Position).magnitude
-                            if distance < 50 then -- Adjust distance as needed
-                                character:MoveTo(enemy.PrimaryPart.Position)
-                                wait(0.5) -- Wait for movement
-                                enemy.Humanoid:TakeDamage(50) -- Adjust damage value as needed
-                                wait(1) -- Wait time to prevent spamming attacks
-                            end
+            -- Find enemies to attack
+            for _, enemy in pairs(workspace:GetChildren()) do
+                if enemy:IsA("Model") and enemy:FindFirstChild("Humanoid") and enemy:FindFirstChild("Level") and enemy.Name ~= player.Name then
+                    local enemyLevel = enemy:FindFirstChild("Level").Value
+                    if enemyLevel <= playerLevel + 5 and enemyLevel >= playerLevel - 5 then
+                        local distance = (humanoidRootPart.Position - enemy.PrimaryPart.Position).magnitude
+                        if distance < 50 then -- Adjust distance as needed
+                            character:MoveTo(enemy.PrimaryPart.Position)
+                            wait(0.5) -- Wait for movement
+                            enemy.Humanoid:TakeDamage(50) -- Adjust damage value as needed
+                            wait(1) -- Wait time to prevent spamming attacks
                         end
                     end
                 end
