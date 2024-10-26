@@ -45,15 +45,19 @@ autofarmButton.MouseButton1Click:Connect(function()
             local player = game.Players.LocalPlayer
             local character = player.Character or player.CharacterAdded:Wait()
             if character then
+                local level = player.Data.Level.Value -- Assuming this is where the player's level is stored
                 -- Find enemies to attack
                 for _, enemy in pairs(workspace:GetChildren()) do
                     if enemy:IsA("Model") and enemy:FindFirstChild("Humanoid") and enemy.Name ~= player.Name then
-                        local distance = (character.HumanoidRootPart.Position - enemy.PrimaryPart.Position).magnitude
-                        if distance < 50 then -- Adjust distance as needed
-                            character:MoveTo(enemy.PrimaryPart.Position)
-                            wait(0.5) -- Wait for movement
-                            enemy.Humanoid:TakeDamage(50) -- Adjust damage as needed
-                            wait(1) -- Adjust wait time to prevent spamming
+                        local enemyLevel = enemy:FindFirstChild("Level") -- Assuming NPCs have a Level attribute
+                        if enemyLevel and enemyLevel.Value <= level + 5 and enemyLevel.Value >= level - 5 then -- Adjust level range as needed
+                            local distance = (character.HumanoidRootPart.Position - enemy.PrimaryPart.Position).magnitude
+                            if distance < 50 then -- Adjust distance as needed
+                                character:MoveTo(enemy.PrimaryPart.Position)
+                                wait(0.5) -- Wait for movement
+                                enemy.Humanoid:TakeDamage(50) -- Adjust damage as needed
+                                wait(1) -- Adjust wait time to prevent spamming
+                            end
                         end
                     end
                 end
@@ -62,50 +66,6 @@ autofarmButton.MouseButton1Click:Connect(function()
         end
     else
         autofarmButton.Text = "Auto-Farm: OFF"
-    end
-end)
-
--- Auto-Quest Feature
-local autoquest = false
-local autoquestButton = CreateToggleButton("Toggle Auto-Quest")
-autoquestButton.MouseButton1Click:Connect(function()
-    autoquest = not autoquest
-    if autoquest then
-        autoquestButton.Text = "Auto-Quest: ON"
-        while autoquest do
-            local player = game.Players.LocalPlayer
-            -- Logic for accepting quests and completing them
-            local quests = player.PlayerGui.Quests:FindFirstChild("Frame")
-            if quests and quests.Visible then
-                for _, quest in pairs(quests:GetChildren()) do
-                    if quest:IsA("TextButton") and quest.Text == "Accept" then
-                        quest:Click()
-                        wait(1)
-                    end
-                end
-            end
-            wait(5) -- Adjust wait time as needed
-        end
-    else
-        autoquestButton.Text = "Auto-Quest: OFF"
-    end
-end)
-
--- Auto-Stat Feature
-local autostat = false
-local autostatButton = CreateToggleButton("Toggle Auto-Stat")
-autostatButton.MouseButton1Click:Connect(function()
-    autostat = not autostat
-    if autostat then
-        autostatButton.Text = "Auto-Stat: ON"
-        while autostat do
-            -- Logic for automatically allocating stats
-            local player = game.Players.LocalPlayer
-            -- Add the logic to allocate stats automatically
-            wait(2) -- Adjust wait time as needed
-        end
-    else
-        autostatButton.Text = "Auto-Stat: OFF"
     end
 end)
 
